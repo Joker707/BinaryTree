@@ -8,6 +8,9 @@ public class BinaryTree {
         head = new Node(value, null);
     }
 
+    public BinaryTree() {
+    }
+
     public Node getHead() {
         return head;
     }
@@ -39,32 +42,6 @@ public class BinaryTree {
         }
     }
 
-    private void AddNode(Node currentNode, int value) {
-        if (currentNode.getValue() > value) {
-            if (currentNode.getLeft() == null) {
-                currentNode.setLeft(new Node(value, currentNode));
-            } else {
-                AddNode(currentNode.getLeft(), value);
-            }
-
-        } else {
-            if (currentNode.getRight() == null) {
-                currentNode.setRight(new Node(value, currentNode));
-            } else {
-                AddNode(currentNode.getRight(), value);
-            }
-        }
-    }
-
-    public void Add(int value) {
-        if (head == null) {
-            head = new Node(value, null);
-        } else {
-            Node currentNode = head;
-            AddNode(currentNode, value);
-        }
-    }
-
     public Node search(int value) {
 
         Node currentNode = head;
@@ -83,29 +60,35 @@ public class BinaryTree {
         Node currentNode = search(value);
         Node parent = currentNode.getParent();
         if (currentNode.getRight() == null && currentNode.getLeft() != null) {
-            parent.setLeft(currentNode.getLeft());
-        } else {
-            if (currentNode.getRight().getRight() != null && currentNode.getRight().getLeft() == null) {
-                currentNode.getRight().setLeft(currentNode.getLeft());
-                parent.setLeft(currentNode.getRight());
-                if (parent == null) {
-                    head = currentNode.getRight();
-                } else {
-                    if (parent.getValue() > currentNode.getValue()) {
-                        parent.setLeft(currentNode.getRight());
-                    }
-                }
+            if (currentNode.getValue() < parent.getValue()) {
+                parent.setLeft(currentNode.getLeft());
             } else {
-                if (currentNode.getRight().getRight() == null
-                        && currentNode.getRight().getLeft() != null) {
-                    currentNode.getRight().getLeft().setLeft(currentNode.getLeft());
-                    currentNode.setLeft(currentNode.getRight().getLeft());
-                    currentNode.getLeft().setRight(currentNode.getRight());
-                    parent.setLeft(currentNode.getLeft());
-                }
+                parent.setRight(currentNode.getLeft());
+            }
+        } else if (currentNode.getRight().getRight() != null) {
+            if (currentNode.getValue() < parent.getValue()) {
+                parent.setLeft(currentNode.getRight());
+            } else {
+                parent.setRight(currentNode.getRight());
+            }
+            if (parent == null) {
+                head = currentNode.getRight();
+            } else if (parent.getValue() > currentNode.getValue()) {
+
+                parent.setLeft(currentNode.getRight());
+            } else {
+                parent.setRight(currentNode.getRight());
+            }
+        } else if (currentNode.getRight().getLeft() != null) {
+            Node min = minNode(currentNode.getRight());
+            if (currentNode.getValue() < parent.getValue()) {
+                parent.setLeft(min);
+            } else {
+                parent.setRight(min);
             }
         }
     }
+
 
     public Node[] getNeighbours(int value) {
         Node currentNode = search(value);
@@ -113,12 +96,32 @@ public class BinaryTree {
                 currentNode.getRight(), currentNode.getParent()};
     }
 
+
+    public Node minNode( Node currentNode) {
+        while (currentNode.getLeft() != null) {
+                currentNode = currentNode.getLeft();
+            }
+        return currentNode;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BinaryTree that = (BinaryTree) o;
-        return Node.equalsNodes(head, that.head);
+        return equalsNodes(head, that.head);
+    }
+
+    public boolean equalsNodes(Node node, Node node1) {
+        if (node1 != null && node != null) {
+            return node1.getValue() == node.getValue();
+        } else if ((node1 == null && node != null) ||
+                (node == null && node1 != null)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @Override

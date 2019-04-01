@@ -47,7 +47,7 @@ public class Node {
         this.parent = parent;
     }
 
-    public static boolean equalsNodes(Node node, Node node1) {
+    public boolean equalsNodes(Node node, Node node1) {
         if (node1 != null && node != null) {
             return node1.value == node.value;
         } else if ((node1 == null && node != null) ||
@@ -56,13 +56,6 @@ public class Node {
         } else {
             return true;
         }
-    }
-
-    public boolean hasNoChildren() {
-        if (left == null && right == null) {
-            return true;
-        }
-        return false;
     }
 
 

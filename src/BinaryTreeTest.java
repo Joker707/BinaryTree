@@ -5,23 +5,28 @@ import static org.junit.Assert.assertEquals;
 public class BinaryTreeTest {
     @Test
     public void add() {
-        BinaryTree bst = new BinaryTree(10);
-        BinaryTree actualbst = new BinaryTree(10);
+        BinaryTree bt = new BinaryTree();
+        BinaryTree actualBt = new BinaryTree();
 
-        assertEquals(bst, actualbst);
+        assertEquals(bt, actualBt);
+
+        BinaryTree bst = new BinaryTree(10);
+        BinaryTree actualBst = new BinaryTree(10);
+
+        assertEquals(bst, actualBst);
 
         bst.add(7);
-        Node head = actualbst.getHead();
+        Node head = actualBst.getHead();
         Node second = new Node(7, head);
         head.setLeft(second);
 
-        assertEquals(bst, actualbst);
+        assertEquals(bst, actualBst);
 
         bst.add(15);
         Node third = new Node(15, head);
         head.setRight(third);
 
-        assertEquals(bst, actualbst);
+        assertEquals(bst, actualBst);
     }
 
     @Test
