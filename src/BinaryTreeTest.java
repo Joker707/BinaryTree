@@ -15,9 +15,9 @@ public class BinaryTreeTest {
 
         assertEquals(bst, actualBst);
 
-        bst.add(7);
+        bst.add(8);
         Node head = actualBst.getHead();
-        Node second = new Node(7, head);
+        Node second = new Node(8, head);
         head.setLeft(second);
 
         assertEquals(bst, actualBst);

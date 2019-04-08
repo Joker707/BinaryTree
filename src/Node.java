@@ -47,11 +47,11 @@ public class Node {
         this.parent = parent;
     }
 
-    public boolean equalsNodes(Node node, Node node1) {
-        if (node1 != null && node != null) {
-            return node1.value == node.value;
-        } else if ((node1 == null && node != null) ||
-                (node == null && node1 != null)) {
+    private boolean equalsNodes(Node node) {
+        if (this != null && node != null) {
+            return this.value == node.value;
+        } else if ((this == null && node != null) ||
+                (node == null && this != null)) {
             return false;
         } else {
             return true;
@@ -65,9 +65,9 @@ public class Node {
         if (o == null || getClass() != o.getClass()) return false;
         Node node = (Node) o;
         return value == node.value &&
-                equalsNodes(left, node.left) &&
-                equalsNodes(right, node.right) &&
-                equalsNodes(parent, node.parent);
+                left.equalsNodes(node.left) &&
+                right.equalsNodes(node.right) &&
+                parent.equalsNodes(node.parent);
     }
 
     @Override

@@ -18,29 +18,29 @@ public class BinaryTree {
     public void add(int value) {
         if (head == null) {
             head = new Node(value, null);
-        } else {
+            return;
+        }
+        Node currentNode = head;
 
-            Node currentNode = head;
+        while (currentNode != null) {
 
-            while (currentNode != null) {
-
-                if (currentNode.getValue() > value) {
-                    if (currentNode.getLeft() == null) {
-                        currentNode.setLeft(new Node(value, currentNode));
-                        break;
-                    }
-                    currentNode = currentNode.getLeft();
-
-                } else {
-                    if (currentNode.getRight() == null) {
-                        currentNode.setRight(new Node(value, currentNode));
-                        break;
-                    }
-                    currentNode = currentNode.getRight();
+            if (currentNode.getValue() > value) {
+                if (currentNode.getLeft() == null) {
+                    currentNode.setLeft(new Node(value, currentNode));
+                    break;
                 }
+                currentNode = currentNode.getLeft();
+
+            } else {
+                if (currentNode.getRight() == null) {
+                    currentNode.setRight(new Node(value, currentNode));
+                    break;
+                }
+                currentNode = currentNode.getRight();
             }
         }
     }
+
 
     public Node search(int value) {
 
@@ -55,36 +55,88 @@ public class BinaryTree {
         return currentNode;
     }
 
-
     public void delete(int value) {
         Node currentNode = search(value);
         Node parent = currentNode.getParent();
-        if (currentNode.getRight() == null && currentNode.getLeft() != null) {
-            if (currentNode.getValue() < parent.getValue()) {
-                parent.setLeft(currentNode.getLeft());
+        if (currentNode.getLeft() == null && currentNode.getRight() == null) {
+            currentNode = null;
+        } else if (currentNode.getLeft() != null && currentNode.getRight() == null) {
+            if (parent != null) {
+                currentNode.getLeft().setParent(parent);
+                if (currentNode.getValue() < parent.getValue()) {
+                    parent.setLeft(currentNode.getLeft());
+                } else {
+                    parent.setRight(currentNode.getLeft());
+                }
             } else {
-                parent.setRight(currentNode.getLeft());
+                head = currentNode.getLeft();
+                head.setParent(null);
             }
-        } else if (currentNode.getRight().getRight() != null) {
-            if (currentNode.getValue() < parent.getValue()) {
-                parent.setLeft(currentNode.getRight());
+        } else if (currentNode.getLeft() == null && currentNode.getRight() != null) {
+            if (parent != null) {
+                currentNode.getRight().setParent(parent);
+                if (currentNode.getValue() < parent.getValue()) {
+                    parent.setLeft(currentNode.getRight());
+                } else {
+                    parent.setRight(currentNode.getRight());
+                }
             } else {
-                parent.setRight(currentNode.getRight());
-            }
-            if (parent == null) {
                 head = currentNode.getRight();
-            } else if (parent.getValue() > currentNode.getValue()) {
-
-                parent.setLeft(currentNode.getRight());
-            } else {
-                parent.setRight(currentNode.getRight());
+                head.setParent(null);
             }
-        } else if (currentNode.getRight().getLeft() != null) {
-            Node min = minNode(currentNode.getRight());
+        } else {
             if (currentNode.getValue() < parent.getValue()) {
-                parent.setLeft(min);
+                if (currentNode.getRight().getLeft() == null) {
+                    currentNode.getLeft().setParent(currentNode.getRight());
+                    currentNode.getRight().setParent(parent);
+                    currentNode.getRight().setLeft(currentNode.getLeft());
+                    if (parent != null) {
+                        parent.setLeft(currentNode.getRight());
+                    } else {
+                        head = currentNode.getRight();
+                        head.setParent(null);
+                    }
+                } else {
+                    Node minNode = minNode(currentNode.getRight());
+                    minNode.getParent().setLeft(null);
+                    minNode.setParent(parent);
+                    minNode.setLeft(currentNode.getLeft());
+                    minNode.setRight(currentNode.getRight());
+                    if (parent != null) {
+                        parent.setLeft(minNode);
+                    } else {
+                        head = minNode;
+                        head.setParent(null);
+                    }
+                    currentNode.getRight().setParent(minNode);
+                    currentNode.getLeft().setParent(minNode);
+                }
             } else {
-                parent.setRight(min);
+                if (currentNode.getRight().getLeft() == null) {
+                    currentNode.getLeft().setParent(currentNode.getRight());
+                    currentNode.getRight().setParent(parent);
+                    currentNode.getRight().setLeft(currentNode.getLeft());
+                    if (parent != null) {
+                        parent.setRight(currentNode.getRight());
+                    } else {
+                        head = currentNode.getRight();
+                        head.setParent(null);
+                    }
+                } else {
+                    Node minNode = minNode(currentNode.getRight());
+                    minNode.getParent().setLeft(null);
+                    minNode.setParent(parent);
+                    minNode.setLeft(currentNode.getLeft());
+                    minNode.setRight(currentNode.getRight());
+                    if (parent != null) {
+                        parent.setRight(minNode);
+                    } else {
+                        head = minNode;
+                        head.setParent(null);
+                    }
+                    currentNode.getRight().setParent(minNode);
+                    currentNode.getLeft().setParent(minNode);
+                }
             }
         }
     }
@@ -96,14 +148,12 @@ public class BinaryTree {
                 currentNode.getRight(), currentNode.getParent()};
     }
 
-
-    public Node minNode( Node currentNode) {
+    public Node minNode(Node currentNode) {
         while (currentNode.getLeft() != null) {
-                currentNode = currentNode.getLeft();
-            }
+            currentNode = currentNode.getLeft();
+        }
         return currentNode;
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -113,9 +163,11 @@ public class BinaryTree {
         return equalsNodes(head, that.head);
     }
 
-    public boolean equalsNodes(Node node, Node node1) {
+    private boolean equalsNodes(Node node, Node node1) {
         if (node1 != null && node != null) {
-            return node1.getValue() == node.getValue();
+            return (node1.getValue() == node.getValue()) &&
+                    (equalsNodes(node.getLeft(), node1.getLeft())) &&
+                    (equalsNodes(node.getRight(), node1.getRight()));
         } else if ((node1 == null && node != null) ||
                 (node == null && node1 != null)) {
             return false;
