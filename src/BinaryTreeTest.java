@@ -1,4 +1,8 @@
 import org.junit.Test;
+import sun.nio.cs.ext.MacArabic;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.junit.Assert.assertEquals;
 
@@ -19,6 +23,10 @@ public class BinaryTreeTest {
         Node head = actualBst.getHead();
         Node second = new Node(8, head);
         head.setLeft(second);
+
+        assertEquals(bst, actualBst);
+
+        bst.add(8);
 
         assertEquals(bst, actualBst);
 
@@ -57,6 +65,58 @@ public class BinaryTreeTest {
         int[] f = {6, 10, 2, 7};
         for (int i : f) actualbst2.add(i);
         assertEquals(bst2, actualbst2);
+
+        BinaryTree bst3 = new BinaryTree(8);
+        bst3.delete(8);
+        BinaryTree actualbst3 = new BinaryTree();
+        assertEquals(bst3, actualbst3);
+
+        BinaryTree bst4 = new BinaryTree();
+        int[] a1 = {21, 8, 16, 49, 88, 36, 328, 396};
+        for (int i : a1) bst4.add(i);
+        bst4.delete(21);
+        BinaryTree actualbst4 = new BinaryTree();
+        int[] b1 = {36, 8, 16, 49, 88, 328, 396};
+        for (int i : b1) actualbst4.add(i);
+        assertEquals(bst4, actualbst4);
+
+        BinaryTree binaryTree = new BinaryTree();
+        ArrayList<Integer> list = new ArrayList<>();
+        int value, sum1, sum2;
+        int array[];
+        array = new int[100];
+
+        while( list.size() != 10) {
+            value = (int) (Math.random() * 100);
+            if (!list.contains(value)) {
+                list.add(value);
+                array[list.size() - 1] = value;
+            }
+        }
+
+        System.out.println(list);
+
+        for (int i:array) {
+            binaryTree.add(array[i]);
+        }
+        sum1 = (list.size() - 1) * list.size() / 2;
+        sum2 = 0;
+        for (int i = 0; i < list.size(); i++) {
+            binaryTree.delete(array[i]);
+            if (binaryTree.search(array[i]) == null) {
+                sum2++;
+            } else {
+                break;
+            }
+            for (int j = i + 1; j < list.size() ; j++) {
+                if (binaryTree.search(array[j]) != null) {
+                    sum2++;
+                } else {
+                    break;
+                }
+            }
+        }
+        assertEquals(sum1, sum2);
     }
 
     @Test
@@ -69,7 +129,8 @@ public class BinaryTreeTest {
         node = bst.search(23);
         assertEquals(23, node.getValue());
     }
-    private void equalsNeighbours(int value, Integer[] neighbours ) {
+
+    private void equalsNeighbours(int value, Integer[] neighbours) {
         BinaryTree bst = new BinaryTree(10);
         int[] a = {6, 14, 5, 7, 23, 12};
         for (int i : a) bst.add(i);
@@ -79,7 +140,7 @@ public class BinaryTreeTest {
         Node[] bstNodes = bst.getNeighbours(value);
 
         for (int i = 0; i < 3; i++) {
-            if ( bstNodes[i] == null) {
+            if (bstNodes[i] == null) {
                 nodeValue = null;
             }
             if (bstNodes[i] != null) {

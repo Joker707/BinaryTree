@@ -20,6 +20,11 @@ public class BinaryTree {
             head = new Node(value, null);
             return;
         }
+
+        if (search(value) != null) {
+            return;
+        }
+
         Node currentNode = head;
 
         while (currentNode != null) {
@@ -59,7 +64,15 @@ public class BinaryTree {
         Node currentNode = search(value);
         Node parent = currentNode.getParent();
         if (currentNode.getLeft() == null && currentNode.getRight() == null) {
-            currentNode = null;
+            if (parent == null) {
+                head = null;
+            } else {
+                if (currentNode.getValue() < parent.getValue()) {
+                    parent.setLeft(null);
+                } else {
+                    parent.setRight(null);
+                }
+            }
         } else if (currentNode.getLeft() != null && currentNode.getRight() == null) {
             if (parent != null) {
                 currentNode.getLeft().setParent(parent);
@@ -85,57 +98,52 @@ public class BinaryTree {
                 head.setParent(null);
             }
         } else {
-            if (currentNode.getValue() < parent.getValue()) {
+            if (parent != null && currentNode.getValue() < parent.getValue()) {
                 if (currentNode.getRight().getLeft() == null) {
                     currentNode.getLeft().setParent(currentNode.getRight());
                     currentNode.getRight().setParent(parent);
                     currentNode.getRight().setLeft(currentNode.getLeft());
-                    if (parent != null) {
-                        parent.setLeft(currentNode.getRight());
-                    } else {
-                        head = currentNode.getRight();
-                        head.setParent(null);
-                    }
+                    parent.setLeft(currentNode.getRight());
                 } else {
                     Node minNode = minNode(currentNode.getRight());
                     minNode.getParent().setLeft(null);
                     minNode.setParent(parent);
                     minNode.setLeft(currentNode.getLeft());
                     minNode.setRight(currentNode.getRight());
-                    if (parent != null) {
-                        parent.setLeft(minNode);
-                    } else {
-                        head = minNode;
-                        head.setParent(null);
-                    }
+                    parent.setLeft(minNode);
                     currentNode.getRight().setParent(minNode);
                     currentNode.getLeft().setParent(minNode);
                 }
-            } else {
+            } else if (parent != null && currentNode.getValue() > parent.getValue()) {
                 if (currentNode.getRight().getLeft() == null) {
                     currentNode.getLeft().setParent(currentNode.getRight());
                     currentNode.getRight().setParent(parent);
                     currentNode.getRight().setLeft(currentNode.getLeft());
-                    if (parent != null) {
-                        parent.setRight(currentNode.getRight());
-                    } else {
-                        head = currentNode.getRight();
-                        head.setParent(null);
-                    }
+                    parent.setRight(currentNode.getRight());
                 } else {
                     Node minNode = minNode(currentNode.getRight());
                     minNode.getParent().setLeft(null);
                     minNode.setParent(parent);
                     minNode.setLeft(currentNode.getLeft());
                     minNode.setRight(currentNode.getRight());
-                    if (parent != null) {
-                        parent.setRight(minNode);
-                    } else {
-                        head = minNode;
-                        head.setParent(null);
-                    }
+                    parent.setRight(minNode);
                     currentNode.getRight().setParent(minNode);
                     currentNode.getLeft().setParent(minNode);
+                }
+            } else if (parent == null) {
+                if (currentNode.getRight().getLeft() == null) {
+                    head = currentNode.getRight();
+                    head.setParent(null);
+                    head.setLeft(currentNode.getLeft());
+                    head.setRight(currentNode.getRight());
+                }
+                if (currentNode.getRight().getLeft() != null) {
+                    Node minNode = minNode(currentNode.getRight());
+                    minNode.getParent().setLeft(null);
+                    head = minNode;
+                    head.setParent(null);
+                    head.setLeft(currentNode.getLeft());
+                    head.setRight(currentNode.getRight());
                 }
             }
         }
@@ -155,6 +163,15 @@ public class BinaryTree {
         return currentNode;
     }
 
+    public static void main(String[] args) {
+        int array[];
+        array = new int[10];
+        for (int i = 0; i < array.length; i++)
+            array[i] = (int) (Math.random() * 1000);
+        for (int i : array)
+            System.out.print(i + " ");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -163,13 +180,13 @@ public class BinaryTree {
         return equalsNodes(head, that.head);
     }
 
-    private boolean equalsNodes(Node node, Node node1) {
-        if (node1 != null && node != null) {
-            return (node1.getValue() == node.getValue()) &&
-                    (equalsNodes(node.getLeft(), node1.getLeft())) &&
-                    (equalsNodes(node.getRight(), node1.getRight()));
-        } else if ((node1 == null && node != null) ||
-                (node == null && node1 != null)) {
+    private boolean equalsNodes(Node a, Node b) {
+        if (b != null && a != null) {
+            return (b.getValue() == a.getValue()) &&
+                    (equalsNodes(a.getLeft(), b.getLeft())) &&
+                    (equalsNodes(a.getRight(), b.getRight()));
+        } else if ((b == null && a != null) ||
+                (a == null && b != null)) {
             return false;
         } else {
             return true;

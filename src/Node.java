@@ -48,14 +48,7 @@ public class Node {
     }
 
     private boolean equalsNodes(Node node) {
-        if (this != null && node != null) {
             return this.value == node.value;
-        } else if ((this == null && node != null) ||
-                (node == null && this != null)) {
-            return false;
-        } else {
-            return true;
-        }
     }
 
 
